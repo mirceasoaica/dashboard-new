@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
 import {
+    Page,
     PageBreadcrumbs,
     PageContent,
     PageDescription,
@@ -14,7 +14,7 @@ import {DemoRadialChart} from "@/app/demo/charts/radial-chart.tsx";
 
 function Dashboard() {
 
-    return (<>
+    return (<Page size="md">
         <PageBreadcrumbs breadcrumbs={[
             {label: 'Home', href: '/'},
             {label: 'Dashboard', href: '/demo'},
@@ -22,7 +22,7 @@ function Dashboard() {
         ]} />
 
         <PageHeader>
-            <PageTitle documentTitle={'Homepage'}>Dashboard</PageTitle>
+            <PageTitle>Dashboard</PageTitle>
             <PageDescription>
                 Welcome to the dashboard. This is a demo page.
             </PageDescription>
@@ -37,9 +37,7 @@ function Dashboard() {
                 <DemoRadialChart/>
             </div>
         </PageContent>
-    </>);
+    </Page>);
 }
 
-export const Route = createFileRoute('/dashboard')({
-  component: Dashboard,
-})
+export { Dashboard }

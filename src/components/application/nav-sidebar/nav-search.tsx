@@ -5,7 +5,7 @@ import {Search, Loader2, KeyboardIcon, XIcon} from 'lucide-react'
 import {Dialog, DialogTitle, DialogContent} from '@/components/ui/dialog'
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from '@/components/ui/command'
 import {SidebarMenuButton, SidebarMenuItem} from "@/components/ui/sidebar.tsx";
-import { Link, useLocation } from '@tanstack/react-router'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // Mock data for search results
 const searchResults = [
@@ -22,8 +22,9 @@ export default function NavSearch() {
     const [query, setQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
     const searchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-    const [filteredResults, setFilteredResults] = React.useState<any[]>([]);
+    const [filteredResults, setFilteredResults] = React.useState<any[]>(searchResults);
     const location = useLocation();
+    const navigate = useNavigate();
 
     // when route is changed close the search dialog
     React.useEffect(() => {
@@ -77,14 +78,14 @@ export default function NavSearch() {
                 </SidebarMenuButton>
 
                 <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogContent className="p-0!" aria-describedby={''} size={'md'}>
+                    <DialogContent className="p-0!" aria-describedby={''} size={'md'} showCloseButton={false}>
                         <DialogTitle className={'hidden'}>Search</DialogTitle>
                         <Command className="rounded-3xl border-none" shouldFilter={false}>
                             <CommandInput
                                 placeholder="Type to search..."
                                 value={query}
                                 onValueChange={handleSearch}
-                                className="border-none focus:ring-0 py-4"
+                                className="border-none focus:ring-0 py-6"
                             />
                             <CommandList className="max-h-[300px] overflow-y-auto">
                                 <CommandEmpty>
@@ -106,12 +107,14 @@ export default function NavSearch() {
                                 {filteredResults.length > 0 && (
                                     <CommandGroup heading={'Reservations'}>
                                         {filteredResults.map((result) => (
-                                            <CommandItem key={result.id} className="px-4 py-2">
-                                                <Link to={result.url} className="flex flex-col items-start">
+                                            <CommandItem key={result.id} className="px-4 py-2" onSelect={() => {
+                                                navigate(result.url);
+                                            }}>
+                                                <div className="flex flex-col items-start">
                                                     <span className="text-sm font-medium">{result.title}</span>
                                                     <span
                                                         className="text-xs text-muted-foreground">{result.description}</span>
-                                                </Link>
+                                                </div>
                                             </CommandItem>
                                         ))}
                                     </CommandGroup>

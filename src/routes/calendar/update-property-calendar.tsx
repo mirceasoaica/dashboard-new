@@ -1,14 +1,4 @@
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button.tsx";
-import {Property} from "@onemineral/pms-js-sdk";
 import {useForm} from "react-hook-form";
 import {useToast} from "@/hooks/use-toast.ts";
 import {
@@ -25,19 +15,19 @@ import {format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {cn} from "@/lib/utils.ts";
+import { Page, PageContent, PageDescription, PageHeader, PageTitle } from "@/components/page";
+import Link from "@/components/application/link";
+import useWobbleAnimate from "@/hooks/use-wobble-animate";
 
-export default function UpdatePropertyCalendar({open = false, property, daterange, onClose, onSaved}: {
-    open: boolean,
-    property: Property | null,
-    daterange: { from: Date, to: Date } | null,
-    onClose: () => void,
-    onSaved: () => void
-}) {
+export default function UpdatePropertyCalendar() {
+    const {ref, wobble} = useWobbleAnimate();
+    
     const form = useForm({
-        values: {
-            daterange
-        }
+        
     });
+
+    const { isDirty } = form.formState;
+
     const { toast } = useToast();
 
     function onSubmit(data: any) {
@@ -49,27 +39,29 @@ export default function UpdatePropertyCalendar({open = false, property, daterang
         </pre>
             ),
         });
-
-        onSaved();
-        onClose();
     }
 
 
-    return <Dialog modal={true} open={open && !!property} onOpenChange={() => onClose()}>
-        <DialogContent className={'sm:max-w-5xl w-full'} onInteractOutside={(e) => e.preventDefault()}>
-            <DialogHeader>
-                <img src={'/public/icon.svg'} alt={'icon'} className={'size-8'}/>
-                <DialogTitle>
+    return <Page modal size="md" validateClose={() => {
+        if(isDirty) {
+            wobble();
+            return false;
+        }
+        return true;
+    }}>
+        <PageHeader>
+                <PageTitle>
                     Are you absolutely sure?
-                </DialogTitle>
-                <DialogDescription>
+                </PageTitle>
+                <PageDescription>
                     This action cannot be undone. This will permanently delete your account
                     and remove your data from our servers.
-                </DialogDescription>
-            </DialogHeader>
+                </PageDescription>
+        </PageHeader>
 
+        <PageContent>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+                <form ref={ref} onSubmit={form.handleSubmit(onSubmit)}>
                     <div className={'py-6'}>
                         <FormField
                             control={form.control}
@@ -77,18 +69,21 @@ export default function UpdatePropertyCalendar({open = false, property, daterang
                             render={({field}) => (
                                 <FormItem className="flex flex-col">
                                     <FormLabel>Date of birth</FormLabel>
+                                    <FormDescription>
+                                        Your date of birth is used to calculate your age.
+                                    </FormDescription>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <FormControl>
                                                 <Button
-                                                    variant={"outline-solid"}
+                                                    variant={"outline"}
                                                     className={cn(
                                                         "max-w-[300px] w-full pl-3 text-left font-normal",
                                                         !field.value && "text-muted-foreground"
                                                     )}
                                                 >
                                                     {field.value?.from ? (
-                                                        field.value.to ? (
+                                                        field.value?.to ? (
                                                             <>
                                                                 {format(field.value.from, "LLL dd, y")} -{" "}
                                                                 {format(field.value.to, "LLL dd, y")}
@@ -111,29 +106,25 @@ export default function UpdatePropertyCalendar({open = false, property, daterang
                                                 disabled={(date) =>
                                                     date < new Date()
                                                 }
-                                                initialFocus
                                             />
                                             <Button type={"button"} variant={"ghost"} className={'mb-3'} onClick={() => field.onChange(null)}>Clear</Button>
                                         </PopoverContent>
                                     </Popover>
-                                    <FormDescription>
-                                        Your date of birth is used to calculate your age.
-                                    </FormDescription>
                                     <FormMessage/>
                                 </FormItem>
                             )}
                         />
                     </div>
+                    
+                    <div className={"flex space-x-4"}>
+                        <Button variant={"secondary"} asChild><Link modal to='/dashboard'>Home</Link></Button>
 
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant={"ghost"} type="button" onClick={onClose}>Cancel</Button>
-                        </DialogClose>
+                        <Button variant={"ghost"} type="button" onClick={() => form.reset()}>Reset</Button>
 
                         <Button type="submit" variant={'default'}>Save changes</Button>
-                    </DialogFooter>
+                    </div>
                 </form>
             </Form>
-        </DialogContent>
-    </Dialog>
+        </PageContent>
+    </Page>
 }

@@ -13,7 +13,7 @@ import {
     SidebarMenu, SidebarMenuButton,
     SidebarMenuItem, SidebarSeparator,
 } from "@/components/ui/sidebar.tsx"
-import { Link } from "@tanstack/react-router"
+import { Link } from "react-router-dom"
 
 export function AppSidebar() {
     return (<>

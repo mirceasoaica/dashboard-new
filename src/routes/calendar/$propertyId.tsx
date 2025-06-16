@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { useParams } from 'react-router-dom'
 import {cn, YMD_FORMAT} from "@/lib/utils.ts";
 import {addMonths, endOfMonth, format, startOfMonth, subMonths, toDate} from "date-fns";
 import {useState} from "react";
@@ -7,10 +7,10 @@ import {useQuery} from "@tanstack/react-query";
 import api from "@/lib/api.ts";
 import {CalendarDate, CalendarDayInfo, CalendarEventInfo} from "@/components/application/calendar/types.ts";
 import SingleCalendar, {SingleCalendarDayElementProp} from "@/components/application/calendar/single";
-import {PageBreadcrumbs, PageContent, PageDescription, PageHeader, PageTitle} from "@/components/page.tsx";
+import {Page, PageBreadcrumbs, PageContent, PageDescription, PageHeader, PageTitle} from "@/components/page.tsx";
 
 function PropertyCalendar() {
-    const { propertyId } = useParams({ from: '/calendar/$propertyId' });
+    const { id } = useParams();
     const [dates] = useState<Date[]>([
         startOfMonth(subMonths(new Date(), 1)),
         endOfMonth(addMonths(new Date(), 24))
@@ -57,7 +57,6 @@ function PropertyCalendar() {
         </div>;
     };
 
-
     const {isLoading} = useQuery({
         queryKey: ['property'],
         queryFn: async () => {
@@ -71,7 +70,7 @@ function PropertyCalendar() {
                 where: {
                     conditions: [{
                         field: 'id',
-                        in: [propertyId],
+                        in: [id],
                     }]
                 }
             });
@@ -109,36 +108,32 @@ function PropertyCalendar() {
         },
     });
 
-    return (<>
-        <PageBreadcrumbs breadcrumbs={[
-            {label: 'Home', href: '/'},
-            {label: 'Dashboard', href: '/demo'},
-            {label: 'Page'}
-        ]} />
-
-        <PageHeader>
-            <PageTitle documentTitle={'Homepage'}>Dashboard</PageTitle>
-            <PageDescription>
-                Welcome to the dashboard. This is a demo page.
-            </PageDescription>
-        </PageHeader>
-
-        <PageContent>
-            {isLoading && <div>Loading...</div>}
-            {!isLoading && property !== null && (<>
-                <SingleCalendar
-                    // @ts-ignore
-                    renderDayElement={DayElement}
-                    eventsData={eventsData}
-                    daysData={daysData}
-                    startDate={dates[0]}
-                    endDate={dates[1]}
-                />
-            </>)}
-        </PageContent>
-    </>);
+    return (<Page>
+            <PageBreadcrumbs breadcrumbs={[
+                {label: 'Home', href: '/'},
+                {label: 'Dashboard', href: '/demo'},
+                {label: 'Page'}
+            ]} />
+            <PageHeader>
+                <PageTitle>Dashboard</PageTitle>
+                <PageDescription>
+                    Welcome to the calendar page
+                </PageDescription>
+            </PageHeader>
+            <PageContent>
+                {isLoading && <div>Loading...</div>}
+                {!isLoading && property !== null && (<>
+                    <SingleCalendar
+                        // @ts-ignore
+                        renderDayElement={DayElement}
+                        eventsData={eventsData}
+                        daysData={daysData}
+                        startDate={dates[0]}
+                        endDate={dates[1]}
+                    />
+                </>)}
+            </PageContent>
+        </Page>);
 }
 
-export const Route = createFileRoute('/calendar/$propertyId')({
-  component: PropertyCalendar,
-})
+export { PropertyCalendar }

@@ -1,35 +1,35 @@
 import Resource from './Resource';
 import Action from './Action';
 import Field from './field.tsx';
-import Text from '../components/Fields/Text';
-import Email from '../components/Fields/Email';
-import Picklist from '../components/Fields/Picklist';
-import Percent from '../components/Fields/Percent';
-import Bool from '../components/Fields/Boolean';
-import Url from '../components/Fields/Url';
-import Id from '../components/Fields/Id';
-import Time from '../components/Fields/Time';
-import Datetime from '../components/Fields/Datetime';
-import Date from '../components/Fields/Date';
-import Daterange from '../components/Fields/Daterange';
-import Color from '../components/Fields/Color';
-import TranslatedText from '../components/Fields/TranslatedText';
-import BelongsTo from '../components/Fields/BelongsTo';
-import Integer from '../components/Fields/Integer';
-import Decimal from '../components/Fields/Decimal';
-import Price from '../components/Fields/Price';
-import Phone from '../components/Fields/Phone';
-import Geo from '../components/Fields/Geo';
-import Ancestors from '../components/Fields/Ancestors';
-import BelongsToMany from '../components/Fields/BelongsToMany';
-import ListOf from '../components/Fields/ListOf';
-import Composed from '../components/Fields/Composed';
-import Password from '../components/Fields/Password';
-import Size from '../components/Fields/Size';
-import RelationField from './RelationField';
-import Svg from '../components/Fields/Svg';
-import WebsiteImage from '../components/Fields/WebsiteImage';
-import Json from '../components/Fields/Json';
+// import Text from '../components/Fields/Text';
+// import Email from '../components/Fields/Email';
+// import Picklist from '../components/Fields/Picklist';
+// import Percent from '../components/Fields/Percent';
+// import Bool from '../components/Fields/Boolean';
+// import Url from '../components/Fields/Url';
+// import Id from '../components/Fields/Id';
+// import Time from '../components/Fields/Time';
+// import Datetime from '../components/Fields/Datetime';
+// import Date from '../components/Fields/Date';
+// import Daterange from '../components/Fields/Daterange';
+// import Color from '../components/Fields/Color';
+// import TranslatedText from '../components/Fields/TranslatedText';
+// import BelongsTo from '../components/Fields/BelongsTo';
+// import Integer from '../components/Fields/Integer';
+// import Decimal from '../components/Fields/Decimal';
+// import Price from '../components/Fields/Price';
+// import Phone from '../components/Fields/Phone';
+// import Geo from '../components/Fields/Geo';
+// import Ancestors from '../components/Fields/Ancestors';
+// import BelongsToMany from '../components/Fields/BelongsToMany';
+// import ListOf from '../components/Fields/ListOf';
+// import Composed from '../components/Fields/Composed';
+// import Password from '../components/Fields/Password';
+// import Size from '../components/Fields/Size';
+// import RelationField from './RelationField';
+// import Svg from '../components/Fields/Svg';
+// import WebsiteImage from '../components/Fields/WebsiteImage';
+// import Json from '../components/Fields/Json';
 
 interface Permission {
     resource: string;
@@ -63,70 +63,71 @@ export default class Schema {
     }
 
     public static processField(fieldData: any): Field | null {
-        switch (fieldData.type) {
-            case 'id':
-                return new Id(fieldData);
-            case 'text':
-            case 'secret':
-                return new Text(fieldData);
-            case 'email':
-                return new Email(fieldData);
-            case 'phone':
-                return new Phone(fieldData);
-            case 'integer':
-                return new Integer(fieldData);
-            case 'decimal':
-                return new Decimal(fieldData);
-            case 'geo':
-                return new Geo(fieldData);
-            case 'picklist':
-                return new Picklist(fieldData);
-            case 'percent':
-                return new Percent(fieldData);
-            case 'price':
-                return new Price(fieldData);
-            case 'boolean':
-                return new Bool(fieldData);
-            case 'url':
-                return new Url(fieldData);
-            case 'time':
-                return new Time(fieldData);
-            case 'datetime':
-                return new Datetime(fieldData);
-            case 'date':
-                return new Date(fieldData);
-            case 'daterange':
-                return new Daterange(fieldData);
-            case 'color':
-                return new Color(fieldData);
-            case 'translated-text':
-                return new TranslatedText(fieldData);
-            case 'belongs-to':
-                return new BelongsTo(fieldData);
-            case 'ancestors':
-                return new Ancestors(fieldData);
-            case 'belongs-to-many':
-                return new BelongsToMany(fieldData);
-            case 'list-of':
-                return new ListOf(fieldData);
-            case 'composed':
-                return new Composed(fieldData);
-            case 'password':
-                return new Password(fieldData);
-            case 'size':
-                return new Size(fieldData);
-            case 'has-many':
-            case 'has-one':
-                return new RelationField(fieldData);
-            case 'svg':
-                return new Svg(fieldData);
-            case 'website-image':
-                return new WebsiteImage(fieldData);
-            case 'json':
-                return new Json(fieldData);
-            default:
-                return null;
-        }
+        return null;
+        // switch (fieldData.type) {
+        //     case 'id':
+        //         return new Id(fieldData);
+        //     case 'text':
+        //     case 'secret':
+        //         return new Text(fieldData);
+        //     case 'email':
+        //         return new Email(fieldData);
+        //     case 'phone':
+        //         return new Phone(fieldData);
+        //     case 'integer':
+        //         return new Integer(fieldData);
+        //     case 'decimal':
+        //         return new Decimal(fieldData);
+        //     case 'geo':
+        //         return new Geo(fieldData);
+        //     case 'picklist':
+        //         return new Picklist(fieldData);
+        //     case 'percent':
+        //         return new Percent(fieldData);
+        //     case 'price':
+        //         return new Price(fieldData);
+        //     case 'boolean':
+        //         return new Bool(fieldData);
+        //     case 'url':
+        //         return new Url(fieldData);
+        //     case 'time':
+        //         return new Time(fieldData);
+        //     case 'datetime':
+        //         return new Datetime(fieldData);
+        //     case 'date':
+        //         return new Date(fieldData);
+        //     case 'daterange':
+        //         return new Daterange(fieldData);
+        //     case 'color':
+        //         return new Color(fieldData);
+        //     case 'translated-text':
+        //         return new TranslatedText(fieldData);
+        //     case 'belongs-to':
+        //         return new BelongsTo(fieldData);
+        //     case 'ancestors':
+        //         return new Ancestors(fieldData);
+        //     case 'belongs-to-many':
+        //         return new BelongsToMany(fieldData);
+        //     case 'list-of':
+        //         return new ListOf(fieldData);
+        //     case 'composed':
+        //         return new Composed(fieldData);
+        //     case 'password':
+        //         return new Password(fieldData);
+        //     case 'size':
+        //         return new Size(fieldData);
+        //     case 'has-many':
+        //     case 'has-one':
+        //         return new RelationField(fieldData);
+        //     case 'svg':
+        //         return new Svg(fieldData);
+        //     case 'website-image':
+        //         return new WebsiteImage(fieldData);
+        //     case 'json':
+        //         return new Json(fieldData);
+        //     default:
+        //         return null;
+        // }
     }
 
     public findField(

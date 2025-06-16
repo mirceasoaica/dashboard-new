@@ -1,9 +1,9 @@
 'use client'
 
-import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { OctagonMinus } from "lucide-react"
+import { Link } from "react-router-dom"
 
 function NotFound() {
     return (
@@ -30,6 +30,4 @@ function NotFound() {
     )
 }
 
-export const Route = createFileRoute("/not-found")({
-  component: NotFound,
-})
+export { NotFound }

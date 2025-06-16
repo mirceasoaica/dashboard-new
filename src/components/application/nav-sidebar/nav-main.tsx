@@ -7,7 +7,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx"
 import NavSearch from "@/components/application/nav-sidebar/nav-search.tsx";
-import { Link } from "@tanstack/react-router";
+import Link from "../link";
 
 export function NavMain() {
     return (

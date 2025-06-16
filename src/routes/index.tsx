@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import Multicalendar, {
     MulticalendarDayElementProp,
     MulticalendarEventElementProp,
@@ -14,21 +13,21 @@ import {
 import {cn} from "@/lib/utils.ts";
 import {toDate} from "date-fns";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
-import React, {useState} from "react";
+import React from "react";
 import {Booking, Property, RatesAvailability} from "@onemineral/pms-js-sdk";
 import {useQuery} from "@tanstack/react-query";
 import api from "@/lib/api.ts";
-import { Link } from '@tanstack/react-router';
 import {CalendarDate, CalendarResourceDayData} from "@/components/application/calendar/types.ts";
-import UpdatePropertyCalendar from "@/components/application/calendar/update-property-calendar.tsx";
-import {PageContent, PageDescription, PageHeader, PageTitle} from "@/components/page.tsx";
+import {Page, PageContent} from "@/components/page.tsx";
+import Link from "@/components/application/link";
+import { useLocation } from "react-router-dom";
+import { useModalNavigate } from "@/hooks/use-modal-navigate";
 
 const EventElement = (props: MulticalendarEventElementProp) => {
-    // @ts-ignore
     const {event, resource, className, ...divProps} = props;
 
     return <div className={cn(className, 'p-1 overflow-hidden')} {...divProps}>
-        <Link to={`/calendar/${resource.id}`}>
+        <Link modal to={`/calendar/${resource.id}`}>
             <div
                 className={'px-1 border-sky-950 w-full rounded h-full bg-sky-700 flex items-center text-xs text-white'}>
                 <div className={'sticky left-0 flex items-center text-ellipsis whitespace-nowrap max-w-full gap-1'}>
@@ -110,7 +109,8 @@ const DayHeaderElement = (props: {
 const ResourceElement = (props: { resource: Property } & React.HTMLProps<HTMLDivElement>) => {
     const {resource} = props;
 
-    return <Link to={`/calendar/${resource.id}`}>
+    return <Link modal to={`/calendar/${resource.id}`}
+    >
         <div className={'flex items-center w-fit text-sm font-bold'}>
             {resource.main_image ?
                 <img src={resource.main_image.thumbnail} alt={''} className={'size-7 rounded mr-3'}/>
@@ -121,10 +121,8 @@ const ResourceElement = (props: { resource: Property } & React.HTMLProps<HTMLDiv
 };
 
 function Home() {
-    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-    const [selectedDates, setSelectedDates] = useState<{ from: Date; to: Date } | null>(null);
-
-
+    const navigate = useModalNavigate();
+    const location = useLocation();
     const {isLoading: propertiesLoading, data: properties} = useQuery({
         queryKey: ['multicalendar-properties'],
         queryFn: async () => {
@@ -189,14 +187,7 @@ function Home() {
         return formattedData;
     };
 
-    return (<>
-        <PageHeader className={'mt-4'}>
-            <PageTitle documentTitle={'Homepage'}>Dashboard</PageTitle>
-            <PageDescription>
-                Welcome to the dashboard. This is a demo page.
-            </PageDescription>
-        </PageHeader>
-
+    return (<Page>
         <PageContent className={'flex flex-col w-full'}>
             <div className="grow">
                 {propertiesLoading && <Skeleton/>}
@@ -207,9 +198,9 @@ function Home() {
                         resourceRowHeight={50}
                         eventRowHeight={50}
                         onLoadMissingData={(resources: Property[], start, end) => loadData(resources, start, end)}
-                        onDateRangeSelected={(resource: Property, start: Date, end: Date) => {
-                            setSelectedProperty(resource);
-                            setSelectedDates({from: start, to: end});
+                        /* // @ts-ignore */
+                        onDateRangeSelected={(resource: Property) => {
+                            navigate(`/calendar-update/${resource.id}`);
                         }}
                         pastMonthsToRender={1}
                         futureMonthsToRender={24}
@@ -252,15 +243,6 @@ function Home() {
                 </Pagination>
             </div>
         </PageContent>
-
-        <UpdatePropertyCalendar open={!!selectedProperty} property={selectedProperty} daterange={selectedDates}
-                                onClose={() => {
-                                    setSelectedDates(null);
-                                    setSelectedProperty(null);
-                                }} onSaved={() => {
-        }}/>
-    </>);
+    </Page>);
 }
-export const Route = createFileRoute('/')({
-  component: Home,
-})
+export { Home }

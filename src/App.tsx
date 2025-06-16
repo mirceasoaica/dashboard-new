@@ -1,10 +1,80 @@
-import { RouterProvider, Router } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
-
-const router = new Router({ routeTree })
+import { Routes, useLocation, Route } from 'react-router-dom'
+import { NotFound } from './routes/not-found'
+import routes from './routes';
+import Layout from './components/layout';
+import { useState } from 'react';
+import { AppContext } from '@/AppContext'
+import { useQuery } from '@tanstack/react-query';
+import AppLoader from './components/application/app-loader';
+import { UnauthorizedAccess } from './components/application/unauthorized-access';
+import { ReactivateSubscription } from './components/application/reactivate-subscription';
+import api from './lib/api';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
-    return <RouterProvider router={router} />
+  const [hasAccess, setHasAccess] = useState(false)
+  const [askForPayment, setAskForPayment] = useState(false)
+  const [zIndexStack, setZIndexStack] = useState([1000001])
+
+  const { isLoading, data } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      try {
+        const settings = (await api.settings.fetch()).response
+        setHasAccess(true)
+        setAskForPayment(settings.subscription?.is_active === false)
+        return settings
+      } catch (e: any) {
+        console.error(e)
+        if (e.statusCode === 404) {
+          setHasAccess(false)
+          return { response: { schema: {} } }
+        }
+      }
+    },
+  })
+
+  if (isLoading) return <AppLoader />;
+  if (!hasAccess) return <UnauthorizedAccess />;
+  if (askForPayment) return <ReactivateSubscription />;
+
+  return <AppContext.Provider
+      value={{
+        ...data,
+        zIndexStack,
+        setZIndexStack,
+      } as any}
+    >
+      <AppRoutes />
+      <Toaster />
+    </AppContext.Provider>;
+}
+
+const AppRoutes = () => {
+  let location = useLocation();
+  let background = location;
+
+  const locationStack = [];
+
+  while (location.state?.background) {
+    background = location.state.background;
+    locationStack.push(location);
+
+    location = location.state.background;
+  }
+
+  return <>
+      <Layout>
+        <Routes location={background}>
+          <Route path='*' element={<NotFound/>}/>
+          {routes.map((route, index) => <Route path={route.path} key={index} element={route.element} />)}
+        </Routes>
+      </Layout>
+      {locationStack.reverse().map((location) => <Routes location={location} key={location.key}>
+          <Route path='*' element={<NotFound/>}/>
+          {routes.map((route, index) => <Route path={route.path} key={index} element={route.element} />)}
+        </Routes>)}
+      </>
 }
 
 export default App

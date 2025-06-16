@@ -96,7 +96,7 @@ export default function Multicalendar({
                                           futureMonthsToRender = 24,
                                       }: MulticalendarProps) {
 
-    const throttleInProgress = useRef();
+    const throttleInProgress = useRef<any>(null);
 
     const dates = useMultiCalendarStore((state) => state.dates);
     const setResources = useMultiCalendarStore((state) => state.setResources);
