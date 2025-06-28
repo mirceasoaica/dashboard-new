@@ -63,7 +63,7 @@ export default class Schema {
     }
 
     public static processField(fieldData: any): Field | null {
-        return null;
+        return new Field(fieldData);
         // switch (fieldData.type) {
         //     case 'id':
         //         return new Id(fieldData);
@@ -256,7 +256,7 @@ export default class Schema {
             return false;
         }
 
-        let res = this.getResource(resource) as Resource;
+        const res = this.getResource(resource) as Resource;
 
         if (action) {
             if (Array.isArray(action)) {
@@ -267,7 +267,7 @@ export default class Schema {
                 return false;
             }
 
-            let act = res.getAction(action) as Action;
+            const act = res.getAction(action) as Action;
 
             if (field) {
                 return act.hasArg(field);

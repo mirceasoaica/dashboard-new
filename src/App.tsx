@@ -3,20 +3,21 @@ import { NotFound } from './routes/not-found'
 import routes from './routes';
 import Layout from './components/layout';
 import { useState } from 'react';
-import { AppContext } from '@/AppContext'
+import { AppContext } from '@/contexts/app-context.tsx'
 import { useQuery } from '@tanstack/react-query';
 import AppLoader from './components/application/app-loader';
 import { UnauthorizedAccess } from './components/application/unauthorized-access';
 import { ReactivateSubscription } from './components/application/reactivate-subscription';
 import api from './lib/api';
 import { Toaster } from './components/ui/toaster';
+import Schema from "@/models/Schema.ts";
+import {Settings} from "@onemineral/pms-js-sdk";
 
 function App() {
   const [hasAccess, setHasAccess] = useState(false)
   const [askForPayment, setAskForPayment] = useState(false)
-  const [zIndexStack, setZIndexStack] = useState([1000001])
 
-  const { isLoading, data } = useQuery({
+  const { isLoading, data } = useQuery<Settings|null>({
     queryKey: ['settings'],
     queryFn: async () => {
       try {
@@ -28,8 +29,8 @@ function App() {
         console.error(e)
         if (e.statusCode === 404) {
           setHasAccess(false)
-          return { response: { schema: {} } }
         }
+        return null
       }
     },
   })
@@ -41,8 +42,7 @@ function App() {
   return <AppContext.Provider
       value={{
         ...data,
-        zIndexStack,
-        setZIndexStack,
+        schema: new Schema(data?.schema)
       } as any}
     >
       <AppRoutes />

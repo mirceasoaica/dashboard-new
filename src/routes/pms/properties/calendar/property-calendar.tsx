@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {cn, YMD_FORMAT} from "@/lib/utils.ts";
 import {addMonths, endOfMonth, format, startOfMonth, subMonths, toDate} from "date-fns";
 import {useState} from "react";
@@ -8,15 +8,18 @@ import api from "@/lib/api.ts";
 import {CalendarDate, CalendarDayInfo, CalendarEventInfo} from "@/components/application/calendar/types.ts";
 import SingleCalendar, {SingleCalendarDayElementProp} from "@/components/application/calendar/single";
 import {Page, PageBreadcrumbs, PageContent, PageDescription, PageHeader, PageTitle} from "@/components/page.tsx";
+import {CircleAlert} from "lucide-react";
+import {Button} from "@/components/ui/button.tsx";
+import FixedFormActions from "@/components/fixed-form-actions.tsx";
 
 function PropertyCalendar() {
-    const { id } = useParams();
+    const {id} = useParams();
     const [dates] = useState<Date[]>([
         startOfMonth(subMonths(new Date(), 1)),
         endOfMonth(addMonths(new Date(), 24))
     ]);
 
-    const [property, setProperty] = useState<Property|null>(null);
+    const [property, setProperty] = useState<Property | null>(null);
     const [eventsData, setEventsData] = useState<CalendarEventInfo[]>([]);
     const [daysData, setDaysData] = useState<CalendarDayInfo[]>([]);
 
@@ -63,10 +66,12 @@ function PropertyCalendar() {
             const response = await api.property.query({
                 // @ts-ignore
                 no_auto_relations: true,
-                with_rates_and_bookings: {daterange: {
-                    start: format(dates[0], YMD_FORMAT),
-                    end: format(dates[1], YMD_FORMAT),
-                }},
+                with_rates_and_bookings: {
+                    daterange: {
+                        start: format(dates[0], YMD_FORMAT),
+                        end: format(dates[1], YMD_FORMAT),
+                    }
+                },
                 where: {
                     conditions: [{
                         field: 'id',
@@ -75,7 +80,7 @@ function PropertyCalendar() {
                 }
             });
 
-            if(!response.response.data.length) {
+            if (!response.response.data.length) {
                 return;
             }
             const result = response.response.data[0];
@@ -108,32 +113,41 @@ function PropertyCalendar() {
         },
     });
 
-    return (<Page>
-            <PageBreadcrumbs breadcrumbs={[
-                {label: 'Home', href: '/'},
-                {label: 'Dashboard', href: '/demo'},
-                {label: 'Page'}
-            ]} />
-            <PageHeader>
-                <PageTitle>Dashboard</PageTitle>
-                <PageDescription>
-                    Welcome to the calendar page
-                </PageDescription>
-            </PageHeader>
-            <PageContent>
-                {isLoading && <div>Loading...</div>}
-                {!isLoading && property !== null && (<>
-                    <SingleCalendar
-                        // @ts-ignore
-                        renderDayElement={DayElement}
-                        eventsData={eventsData}
-                        daysData={daysData}
-                        startDate={dates[0]}
-                        endDate={dates[1]}
-                    />
-                </>)}
-            </PageContent>
-        </Page>);
+    return (<Page size={'sm'}>
+        <PageBreadcrumbs breadcrumbs={[
+            {label: 'Home', href: '/'},
+            {label: 'Dashboard', href: '/demo'},
+            {label: 'Page'}
+        ]}/>
+        <PageHeader>
+            <PageTitle>Dashboard</PageTitle>
+            <PageDescription>
+                Welcome to the calendar page
+            </PageDescription>
+        </PageHeader>
+        <PageContent className={'-mt-4'}>
+            {isLoading && <div>Loading...</div>}
+            {!isLoading && property !== null && (<>
+                <SingleCalendar
+                    // @ts-ignore
+                    renderDayElement={DayElement}
+                    eventsData={eventsData}
+                    daysData={daysData}
+                    startDate={dates[0]}
+                    endDate={dates[1]}
+                />
+            </>)}
+
+            <FixedFormActions visible={true}>
+                <CircleAlert className={'text-orange-300 size-5 ml-1'}/>
+                <div className={'mr-10 text-muted-foreground font-semibold'}>
+                    Unsaved changes
+                </div>
+                <Button variant={"outline"} className={''} size={'sm'}>Reset</Button>
+                <Button variant={'default'} size={'sm'}>Save</Button>
+            </FixedFormActions>
+        </PageContent>
+    </Page>);
 }
 
-export { PropertyCalendar }
+export {PropertyCalendar}

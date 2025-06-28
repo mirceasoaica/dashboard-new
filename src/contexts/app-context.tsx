@@ -18,7 +18,5 @@ export const AppContext = createContext<{
     onboarding: Onboarding;
     redirect_to: string;
     subscription?: Subscription;
-    zIndexStack: number[];
-    setZIndexStack: (value: number[]) => void;
     // @ts-ignore
 }>({});

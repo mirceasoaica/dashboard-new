@@ -8,7 +8,6 @@ import {
     BreadcrumbList, BreadcrumbPage,
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb.tsx";
-import {clsx} from "clsx";
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle} from "@/components/ui/sheet.tsx";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -49,20 +48,20 @@ export function Page({children, modal = false, size = 'sm', validateClose}: {chi
 
         if(modal) {
             content = <Dialog open={open} onOpenChange={attemptClose}>
-                    <DialogContent size={size}>
+                    <DialogContent className={'@container group/page is-background is-dialog'} size={size}>
                         {children}
                     </DialogContent>
                 </Dialog>;
         } else {
             const sheetSizes: any = {
-                sm: 'md:max-w-xl! max-w-full!',
-                md: 'md:max-w-3xl! max-w-full!',
-                lg: 'xl:max-w-5xl! lg:max-w-3xl! max-w-full!',
-                xl: 'xl:max-w-7xl! lg:max-w-5xl! max-w-full!'
+                sm: 'md:max-w-xl!',
+                md: 'md:max-w-3xl!',
+                lg: 'xl:max-w-5xl! lg:max-w-3xl!',
+                xl: 'xl:max-w-7xl! lg:max-w-5xl!'
             };
             
             content = <Sheet open={open} onOpenChange={attemptClose}>
-                    <SheetContent className={cn("min-w-80 m-2 rounded-lg flex flex-col h-[calc(100dvh-1rem)] border w-full! px-4 overflow-y-auto", sheetSizes[size])}>
+                    <SheetContent className={cn("@container max-w-[calc(100vw-1rem)]! group/page is-sheet is-background gap-0 min-w-80 m-2 rounded-2xl flex flex-col h-[calc(100dvh-1rem)] border shadow-xl w-full! px-4 overflow-y-auto", sheetSizes[size])}>
                         {children}
                     </SheetContent>
                 </Sheet>;
@@ -83,7 +82,7 @@ export function Page({children, modal = false, size = 'sm', validateClose}: {chi
                 sheet: false,
                 modal: false,
               } as any}
-            >{children}</PageContext.Provider>;
+            ><div className={'@container relative w-full h-full group/page'}>{children}</div></PageContext.Provider>;
 }
 
 export function PageBreadcrumbs({breadcrumbs = []}: { breadcrumbs?: BreadcrumbType[] }) {
@@ -135,11 +134,11 @@ export function PageHeader({children, className}: { children: React.ReactNode, c
             return <DialogHeader className={className}>{children}</DialogHeader>;
         }
 
-        return <SheetHeader className={cn('-mx-4', className)}>{children}</SheetHeader>;
+        return <SheetHeader className={cn('-mx-4 mt-4', className)}>{children}</SheetHeader>;
     }
 
     return (
-        <div className={clsx("mt-4 mx-2 sm:mx-5 space-y-1", className)}>
+        <div className={cn("mt-4 mx-2 sm:mx-5 space-y-1", className)}>
             {children}
         </div>
     );
@@ -157,7 +156,29 @@ export function PageTitle({children, className}: { children: React.ReactNode, cl
     }
 
     return (
-        <h1 className={clsx("text-xl font-medium text-balance", className)}>{children}</h1>
+        <h1 className={cn("text-xl font-medium text-balance", className)}>{children}</h1>
+    );
+}
+
+export function PageHeaderContainer({children, className}: { children: React.ReactNode, className?: string }) {
+    return (
+        <div className={cn("@3xl:flex @3xl:items-center", className)}>{children}</div>
+    );
+}
+
+export function PageActions({children, className}: { children: React.ReactNode, className?: string }) {
+    const location = useLocation();
+    const {modal} = useContext(PageContext);
+
+    if (location.state?.background) {
+        if (modal) {
+            return <div className={cn('flex items-center mt-4 @3xl:mt-0', className)}>{children}</div>;
+        }
+        return <div className={cn('flex items-center mt-0 @3xl:mt-4', className)}>{children}</div>;
+    }
+
+    return (
+        <div className={cn('flex items-center px-2 sm:px-4 mt-4 @3xl:mt-0', className)}>{children}</div>
     );
 }
 
@@ -173,7 +194,7 @@ export function PageDescription({children, className}: { children: React.ReactNo
     }
 
     return (
-        <p className={clsx("text-muted-foreground", className)}>{children}</p>
+        <p className={cn("text-muted-foreground", className)}>{children}</p>
     );
 }
 
@@ -181,8 +202,8 @@ export function PageContent({children, className}: { children: React.ReactNode, 
     const location = useLocation();
 
     return (
-        <div className={clsx("@container grow w-full", className, {
-            'px-2 pb-16 sm:px-5 md:pb-0 mt-4': !location.state?.background,
+        <div className={cn("grow w-full mt-4 relative", className, {
+            'px-2 sm:px-5': !location.state?.background,
         })}>
             {children}
         </div>

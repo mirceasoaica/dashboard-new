@@ -1,11 +1,12 @@
-import { Link, LinkProps, useLocation } from "react-router-dom";
+import { Link as NativeLink, LinkProps, useLocation } from "react-router-dom";
 
-export default function (props: LinkProps & {modal?: boolean}) {
+export default Link
+
+function Link(props: LinkProps & { modal?: boolean }) {
     const {modal, children, ...options} = props;
     const location = useLocation();
 
-    return <Link {...options} state={modal ? {
+    return <NativeLink {...options} state={modal ? {
         background: location,
-        type: 'sheet',
-    } : {}}>{children}</Link>
+    } : {}}>{children}</NativeLink>
 }

@@ -20,7 +20,6 @@ import api from "@/lib/api.ts";
 import {CalendarDate, CalendarResourceDayData} from "@/components/application/calendar/types.ts";
 import {Page, PageContent} from "@/components/page.tsx";
 import Link from "@/components/application/link";
-import { useLocation } from "react-router-dom";
 import { useModalNavigate } from "@/hooks/use-modal-navigate";
 
 const EventElement = (props: MulticalendarEventElementProp) => {
@@ -122,7 +121,7 @@ const ResourceElement = (props: { resource: Property } & React.HTMLProps<HTMLDiv
 
 function Home() {
     const navigate = useModalNavigate();
-    const location = useLocation();
+
     const {isLoading: propertiesLoading, data: properties} = useQuery({
         queryKey: ['multicalendar-properties'],
         queryFn: async () => {

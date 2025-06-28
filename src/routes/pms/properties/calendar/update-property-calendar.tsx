@@ -12,12 +12,12 @@ import {
 } from "@/components/ui/form.tsx";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 import {format} from "date-fns";
-import {CalendarIcon} from "lucide-react";
+import {CalendarIcon, CircleAlert} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {cn} from "@/lib/utils.ts";
-import { Page, PageContent, PageDescription, PageHeader, PageTitle } from "@/components/page";
-import Link from "@/components/application/link";
-import useWobbleAnimate from "@/hooks/use-wobble-animate";
+import { Page, PageContent, PageDescription, PageHeader, PageTitle } from "@/components/page.tsx";
+import useWobbleAnimate from "@/hooks/use-wobble-animate.ts";
+import FixedFormActions from "@/components/fixed-form-actions.tsx";
 
 export default function UpdatePropertyCalendar() {
     const {ref, wobble} = useWobbleAnimate();
@@ -61,8 +61,8 @@ export default function UpdatePropertyCalendar() {
 
         <PageContent>
             <Form {...form}>
-                <form ref={ref} onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className={'py-6'}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className={'pt-6'}>
                         <FormField
                             control={form.control}
                             name="daterange"
@@ -115,14 +115,15 @@ export default function UpdatePropertyCalendar() {
                             )}
                         />
                     </div>
-                    
-                    <div className={"flex space-x-4"}>
-                        <Button variant={"secondary"} asChild><Link modal to='/dashboard'>Home</Link></Button>
 
-                        <Button variant={"ghost"} type="button" onClick={() => form.reset()}>Reset</Button>
-
-                        <Button type="submit" variant={'default'}>Save changes</Button>
-                    </div>
+                    <FixedFormActions visible={isDirty} ref={ref} className={'justify-start'}>
+                        <CircleAlert className={'text-orange-300 size-5 ml-1'}/>
+                        <div className={'mr-10 text-muted-foreground font-semibold'}>
+                            Unsaved changes
+                        </div>
+                        <Button variant={"outline"} type={'reset'} className={''} size={'sm'} onClick={() => form.reset()}>Reset</Button>
+                        <Button variant={'default'} type={'submit'} size={'sm'}>Save</Button>
+                    </FixedFormActions>
                 </form>
             </Form>
         </PageContent>
